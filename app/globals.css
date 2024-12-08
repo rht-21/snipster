@@ -21,12 +21,74 @@
   body {
     @apply scroll-smooth bg-background text-foreground;
   }
+  :root {
+    --radius: 0.5rem;
+  }
 }
 
 @layer utilities {
   .active-page {
     @apply text-red;
   }
+}
+
+/* Hide Scrollbar */
+
+*::-webkit-scrollbar {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
+}
+
+/* Clerk Overrides */
+
+.cl-userButtonPopoverActionButtonIcon {
+  color: white;
+}
+
+.cl-logoBox {
+  height: 40px;
+}
+.cl-dividerLine {
+  background: #333;
+  height: 2px;
+}
+
+.cl-socialButtonsIconButton {
+  border: 3px solid #333;
+}
+
+.cl-internal-wkkub3 {
+  color: white;
+}
+.cl-userButtonPopoverActionButton {
+  color: white;
+}
+
+.cl-socialButtonsBlockButtonText {
+  color: white;
+}
+
+.cl-button__github .cl-internal-18u6q9q {
+  filter: invert();
+}
+
+.cl-socialButtonsBlockButton {
+  background-color: #333;
+}
+
+.cl-otpCodeFieldInput {
+  background-color: #333;
+}
+
+.cl-userPreviewTextContainer {
+  color: white;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  color: #f9ab72;
 }
 
 /* Loader */

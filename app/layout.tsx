@@ -27,6 +27,15 @@ export default function RootLayout({
           layout: {
             logoImageUrl: "/logo.png",
           },
+          variables: {
+            colorText: "#fff",
+            colorBackground: "#111",
+            colorPrimary: "#FF7474",
+            colorInputBackground: "#333",
+            colorInputText: "#fff",
+            colorTextSecondary: "#fff",
+            colorTextOnPrimaryBackground: "#111",
+          },
         }}
       >
         <body className={`${poppins.variable} font-poppins antialiased`}>
