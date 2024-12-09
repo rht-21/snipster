@@ -119,10 +119,10 @@ const EditSnippetDialog = ({
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/snippets/${Snippet._id}`, {
+      const response = await fetch(`/api/snippets`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedValues),
+        body: JSON.stringify({ ...updatedValues, _id: Snippet._id }),
       });
 
       const data = await response.json();
@@ -146,9 +146,10 @@ const EditSnippetDialog = ({
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/snippets/${Snippet._id}`, {
+      const response = await fetch(`/api/snippets/`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ _id: Snippet._id }),
       });
 
       const data = await response.json();
