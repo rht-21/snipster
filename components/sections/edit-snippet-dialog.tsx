@@ -25,9 +25,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { SelectContent } from "@radix-ui/react-select";
-import { SnippetProps } from "../ui/snippet-card";
 import Loader from "../Loader";
 import { useRouter } from "next/navigation";
+import { SnippetProps } from "@/lib/utils";
 
 // Define the schema for validation
 const formSchema = z.object({
