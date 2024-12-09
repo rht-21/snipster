@@ -6,7 +6,10 @@ type Params = {
   _id: string;
 };
 
-export const PUT = async (req: NextRequest, params: Params) => {
+export const PUT = async (
+  req: Request,
+  { params }: { params: { _id: string } }
+) => {
   const { _id } = await params;
   try {
     await connectDB();
@@ -22,10 +25,14 @@ export const PUT = async (req: NextRequest, params: Params) => {
       isPublic,
     };
 
-    const snippet = await Snippet.findByIdAndUpdate(_id, updatedSnippet, {
-      new: true,
-      runValidators: true,
-    });
+    const snippet = await Snippet.findOneAndUpdate(
+      { _id },
+      { updatedSnippet },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!snippet) {
       return NextResponse.json({ error: "Snippet not found" }, { status: 404 });
     }
@@ -39,7 +46,10 @@ export const PUT = async (req: NextRequest, params: Params) => {
   }
 };
 
-export const DELETE = async (req: NextRequest, params: Params) => {
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { _id: string } }
+) => {
   const { _id } = await params;
 
   try {
