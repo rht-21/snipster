@@ -3,8 +3,8 @@
 import Loader from "@/components/Loader";
 import EditSnippetDialog from "@/components/sections/edit-snippet-dialog";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { SnippetProps } from "@/components/ui/snippet-card";
 import SnippetCategory from "@/components/ui/snippet-category";
+import { SnippetProps } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { IconCopy, IconEdit, IconLock, IconWorld } from "@tabler/icons-react";
 import copy from "copy-to-clipboard";
