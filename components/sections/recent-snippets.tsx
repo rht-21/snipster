@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import SnippetCard, { SnippetProps } from "../ui/snippet-card";
+import SnippetCard from "../ui/snippet-card";
 import Loader from "../Loader";
 import { useUser } from "@clerk/nextjs";
+import { SnippetProps } from "@/lib/utils";
 
 const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
   const { user } = useUser();
