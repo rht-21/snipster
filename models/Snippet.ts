@@ -7,6 +7,8 @@ export interface ISnippet extends Document {
   keywords: string[];
   isPublic: boolean;
   createdBy: string;
+  userName: string;
+  userImage: string;
   likes: number;
   createdAt: Date;
 }
@@ -37,6 +39,14 @@ const snippetSchema: Schema = new Schema(
       required: true,
     },
     createdBy: {
+      type: String,
+      required: true,
+    },
+    userName: {
+      type: String,
+      required: true,
+    },
+    userImage: {
       type: String,
       required: true,
     },

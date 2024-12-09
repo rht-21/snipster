@@ -25,12 +25,16 @@ const Homepage = ({
   return (
     <main className="flex flex-col gap-s w-full">
       <HomeCardsLayout />
-      <RecentSnippets isChange={isChange} setIsChange={setIsChange} />
+      <RecentSnippets isChange={isChange} />
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
           <AddSnippet />
         </DialogTrigger>
-        <AddSnippetDialog closeDialog={handleDialogClose} />
+        <AddSnippetDialog
+          isChange={isChange}
+          setIsChange={setIsChange}
+          closeDialog={handleDialogClose}
+        />
       </Dialog>
     </main>
   );

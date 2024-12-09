@@ -1,5 +1,6 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState, useTransition } from "react";
+import Loader from "../Loader";
 
 const HomeCard = ({
   text,
@@ -10,8 +11,28 @@ const HomeCard = ({
   href: string;
   className?: string;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const handleLinkClick = () => {
+    startTransition(() => {
+      setIsLoading(true);
+    });
+  };
+
+  useEffect(() => {
+    if (!isPending) {
+      setIsLoading(false);
+    }
+  }, [isPending]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Link
+      onClick={handleLinkClick}
       href={href}
       className={`flex-1 max-h-[160px] md:min-w-[300px] aspect-video flex items-center justify-center p-xxs bg-snippet-card 
     bg-cover bg-center rounded-2xl hover:shadow-lg hover:shadow-white/10 cursor-pointer overflow-hidden duration-200 invert hover:-translate-y-1 relative ${className}`}

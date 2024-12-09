@@ -2,20 +2,37 @@
 
 import { NavItems } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { usePathname } from "next/navigation";
 import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
-import Loader from "./Loader";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { IconMenu } from "@tabler/icons-react";
 import Logo from "./ui/logo";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import Loader from "./Loader";
 
 const Navbar = () => {
   const pathname = usePathname();
   const { user } = useUser();
 
-  if (!user) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    startTransition(() => {
+      setIsLoading(true);
+    });
+  };
+
+  useEffect(() => {
+    if (!isPending) {
+      setIsLoading(false);
+    }
+  }, [isPending]);
+
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -25,7 +42,7 @@ const Navbar = () => {
         <p>
           Welcome,{" "}
           <span className="text-red">
-            {user?.fullName || user?.firstName || user?.username}
+            {user?.fullName || user?.firstName || user?.username || "Guest"}
           </span>{" "}
         </p>
       </div>
@@ -36,7 +53,8 @@ const Navbar = () => {
         {Object.keys(NavItems).map((key) => {
           const path = NavItems[key as keyof typeof NavItems];
           const isActive =
-            pathname === path || (pathname === "/" && key === "home");
+            (pathname.startsWith(path) && key !== "home") ||
+            (pathname === "/" && key === "home");
 
           return (
             <Link
@@ -58,13 +76,13 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Nav */}
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex-1 sm:hidden flex items-center justify-end gap-s">
           <SignedIn>
             <UserButton />
           </SignedIn>
           <SheetTrigger>
-            <IconMenu stroke={1.5} />
+            <IconMenu stroke={1.5} onClick={() => setIsOpen(true)} />
           </SheetTrigger>
         </div>
         <SheetContent
@@ -75,12 +93,14 @@ const Navbar = () => {
           {Object.keys(NavItems).map((key) => {
             const path = NavItems[key as keyof typeof NavItems];
             const isActive =
-              pathname === path || (pathname === "/" && key === "home");
+              (pathname.startsWith(path) && key !== "home") ||
+              (pathname === "/" && key === "home");
 
             return (
               <Link
                 key={key}
                 href={path}
+                onClick={handleLinkClick} // Close the sheet on link click
                 className={`capitalize duration-200 text-h4 ${
                   isActive
                     ? "active-page hover:text-red hover:bg-transparent"

@@ -27,6 +27,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { SelectContent } from "@radix-ui/react-select";
 import { SnippetProps } from "../ui/snippet-card";
 import Loader from "../Loader";
+import { useRouter } from "next/navigation";
 
 // Define the schema for validation
 const formSchema = z.object({
@@ -62,6 +63,7 @@ const EditSnippetDialog = ({
   const [showCode, setShowCode] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -161,6 +163,7 @@ const EditSnippetDialog = ({
       setShowLoader(true);
       closeDialog();
       console.log("Snippet deleted", data);
+      router.push("/");
     } catch (error) {
       console.error("Error deleting snippet:", error);
     } finally {

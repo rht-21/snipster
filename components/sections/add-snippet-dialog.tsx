@@ -29,6 +29,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { SelectContent } from "@radix-ui/react-select";
 import { useUser } from "@clerk/nextjs";
 import Loader from "../Loader";
+import { Category } from "@/lib/utils";
 
 const formSchema = z.object({
   snippetName: z
@@ -40,21 +41,19 @@ const formSchema = z.object({
   keywords: z.array(z.string()).optional(),
   isPublic: z.boolean(),
   createdBy: z.string(),
+  userName: z.string(),
+  userImage: z.string(),
 });
 
-const categories = [
-  "JavaScript",
-  "Python",
-  "Java",
-  "Ruby",
-  "C++",
-  "Go",
-  "TypeScript",
-  "PHP",
-  "Swift",
-];
-
-const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
+const AddSnippetDialog = ({
+  closeDialog,
+  isChange,
+  setIsChange,
+}: {
+  closeDialog: () => void;
+  isChange: boolean;
+  setIsChange: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const { user } = useUser();
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [showCode, setShowCode] = useState<boolean>(false);
@@ -69,7 +68,9 @@ const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       codeSnippet: "",
       keywords: [],
       isPublic: true,
-      createdBy: user?.id || "",
+      createdBy: "",
+      userName: "",
+      userImage: "",
     },
   });
 
@@ -113,7 +114,12 @@ const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       ...values,
       keywords,
       createdBy: user?.id,
+      userName: user?.fullName,
+      userImage: user?.imageUrl,
     };
+
+    console.log(updatedValues);
+
     setLoading(true);
 
     try {
@@ -130,7 +136,7 @@ const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       if (response.ok) {
         setShowLoader(true);
         console.log("Snippet created successfully:", data.snippet);
-        // Close the dialog after successful submission
+        setIsChange(!isChange);
         closeDialog();
       } else {
         console.error("Error creating snippet:", data.error);
@@ -189,8 +195,12 @@ const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent className="bg-background border rounded-sm border-foreground/30">
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
+                        {Object.keys(Category).map((category) => (
+                          <SelectItem
+                            className="capitalize"
+                            key={category}
+                            value={category}
+                          >
                             {category}
                           </SelectItem>
                         ))}
@@ -256,7 +266,7 @@ const AddSnippetDialog = ({ closeDialog }: { closeDialog: () => void }) => {
                   <FormLabel>Keywords</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter keywords (press Enter to add)"
+                      placeholder="Enter keywords (press Enter or Space to add)"
                       {...field}
                       onKeyDown={handleKeyDown}
                       onChange={handleKeywordsChange}

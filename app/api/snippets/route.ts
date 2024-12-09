@@ -13,6 +13,8 @@ export const POST = async (req: NextRequest) => {
       keywords,
       isPublic,
       createdBy,
+      userName,
+      userImage,
     } = await req.json();
 
     const newSnippet = new Snippet({
@@ -22,6 +24,9 @@ export const POST = async (req: NextRequest) => {
       keywords,
       isPublic,
       createdBy,
+      userName,
+      userImage,
+      createdAt: new Date(),
     });
 
     console.log(newSnippet);
@@ -44,11 +49,29 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
-export const GET = async () => {
+export const GET = async (req: Request) => {
   try {
+    const url = new URL(req.url);
+    const userId = url.searchParams.get("_id");
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID (_id) is required" },
+        { status: 400 }
+      );
+    }
+
+    console.log("backend - ", userId);
+
     await connectDB();
-    const snippets = await Snippet.find();
-    return NextResponse.json(snippets);
+
+    const snippet = await Snippet.find({ createdBy: userId });
+    if (!snippet) {
+      console.error("Snippet not found");
+      return NextResponse.json({ error: "Snippet not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(snippet);
   } catch (error) {
     console.error("Error fetching snippets:", error);
     return NextResponse.json(
