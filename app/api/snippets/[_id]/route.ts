@@ -1,10 +1,6 @@
 import connectDB from "@/lib/mongodb";
 import Snippet from "@/models/Snippet";
-import { NextRequest, NextResponse } from "next/server";
-
-type Params = {
-  _id: string;
-};
+import { NextResponse } from "next/server";
 
 export const PUT = async (
   req: Request,
