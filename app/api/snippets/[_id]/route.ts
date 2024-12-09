@@ -2,7 +2,11 @@ import connectDB from "@/lib/mongodb";
 import Snippet from "@/models/Snippet";
 import { NextRequest, NextResponse } from "next/server";
 
-export const PUT = async (req: NextRequest, params: { _id: string }) => {
+type Params = {
+  _id: string;
+};
+
+export const PUT = async (req: NextRequest, params: Params) => {
   const { _id } = await params;
   try {
     await connectDB();
@@ -35,10 +39,7 @@ export const PUT = async (req: NextRequest, params: { _id: string }) => {
   }
 };
 
-export const DELETE = async (
-  req: NextRequest,
-  { params }: { params: { _id: string } }
-) => {
+export const DELETE = async (req: NextRequest, params: Params) => {
   const { _id } = await params;
 
   try {
