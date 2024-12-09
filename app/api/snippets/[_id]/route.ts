@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { _id: string } }
+  context: { params: { _id: string } }
 ) => {
   try {
     await connectDB();
 
-    const { _id } = params;
+    const { _id } = context.params;
 
     const { snippetName, category, codeSnippet, keywords, isPublic } =
       await req.json();
@@ -41,11 +41,11 @@ export const PUT = async (
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: { _id: string } }
+  context: { params: { _id: string } }
 ) => {
   try {
     await connectDB();
-    const { _id } = params;
+    const { _id } = context.params;
     const deletedSnippet = await Snippet.findByIdAndDelete(_id);
     if (!deletedSnippet) {
       return NextResponse.json({ error: "Snippet not found" }, { status: 404 });
