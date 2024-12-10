@@ -3,11 +3,7 @@ import React from "react";
 
 const SnippetCategory = ({ category }: { category: string }) => {
   return (
-    <span
-      className={`text-sm py-1 px-2 rounded-full ${
-        Category[category] || "bg-orange text-white"
-      }`}
-    >
+    <span className={`text-sm py-1 px-2 rounded-full ${Category[category]}`}>
       {category}
     </span>
   );

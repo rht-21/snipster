@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import SnippetCard from "../ui/snippet-card";
 import Loader from "../Loader";
 import { SnippetProps } from "@/lib/utils";
+import { useUser } from "@clerk/nextjs";
 
-const ExploreSnippets = ({
+const LikedSnippets = ({
   searchTerm,
   filters,
   sortBy,
@@ -16,26 +17,33 @@ const ExploreSnippets = ({
 }) => {
   const [snippets, setSnippets] = useState<SnippetProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchSnippets = async () => {
       setLoading(true);
+      const queryParams = new URLSearchParams({
+        _id: user?.id || "",
+      }).toString();
       try {
-        const response = await fetch("/api/getAllSnippets");
+        const response = await fetch(`/api/getLikedSnippets?${queryParams}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch snippets");
         }
         const data = await response.json();
         setSnippets(data);
       } catch (error) {
-        console.error(error);
+        console.log(error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSnippets();
-  }, []);
+  }, [user]);
 
   const filterSnippets = (snippets: SnippetProps[]) => {
     return snippets.filter((snippet) => {
@@ -95,14 +103,16 @@ const ExploreSnippets = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
         {filteredAndSortedSnippets.length > 0 ? (
           filteredAndSortedSnippets.map((snippet) => (
-            <SnippetCard key={snippet._id} Snippet={snippet} isExplore={true} />
+            <SnippetCard key={snippet._id} Snippet={snippet} />
           ))
         ) : (
-          <p className="text-foreground/70">No snippets found.</p>
+          <p className="text-foreground/70">
+            No liked snippets? Explore them now!
+          </p>
         )}
       </div>
     </section>
   );
 };
 
-export default ExploreSnippets;
+export default LikedSnippets;

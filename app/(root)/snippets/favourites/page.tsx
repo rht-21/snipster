@@ -1,7 +1,7 @@
 "use client";
 
 import DesktopFilter from "@/components/sections/desktop-filter";
-import ExploreSnippets from "@/components/sections/explore-snippets";
+import LikedSnippets from "@/components/sections/liked-snippets";
 import MobileFilter from "@/components/sections/mobile-filter";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import SearchBar from "@/components/ui/search-bar";
@@ -12,12 +12,12 @@ type FilterState = {
   category: string;
 };
 
-const Explore = () => {
+const Favourites = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filters, setFilters] = useState<FilterState>({
     category: "",
   });
-  const [sortBy, setSortBy] = useState<string>("name"); // Default sorting by name
+  const [sortBy, setSortBy] = useState<string>("name");
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -30,7 +30,7 @@ const Explore = () => {
           <SearchBar onSearch={handleSearch} />
           <Dialog>
             <div className="flex items-center justify-between my-xs">
-              <h3 className="text-h3">Explore Snippets</h3>
+              <h3 className="text-h3">Liked Snippets</h3>
               <DialogTrigger className="lg:hidden">
                 <IconFilter stroke={1.5} size={20} />
               </DialogTrigger>
@@ -42,7 +42,7 @@ const Explore = () => {
               setSortBy={setSortBy}
             />
           </Dialog>
-          <ExploreSnippets
+          <LikedSnippets
             searchTerm={searchTerm}
             filters={filters}
             sortBy={sortBy}
@@ -61,4 +61,4 @@ const Explore = () => {
   );
 };
 
-export default Explore;
+export default Favourites;

@@ -86,9 +86,6 @@ const DesktopFilter = ({
             <SelectItem className="capitalize" value="category">
               Category
             </SelectItem>
-            <SelectItem className="capitalize" value="likes">
-              Likes
-            </SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -13,8 +13,8 @@ const HomeCardsLayout = () => {
           className="hover:hue-rotate-90"
         />
         <HomeCard
-          href="/snippets"
-          text="View Created Snippets"
+          href="/snippets/favourites"
+          text="View Liked Snippets"
           className="hue-rotate-180 hover:hue-rotate-90"
         />
       </div>

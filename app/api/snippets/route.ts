@@ -61,8 +61,6 @@ export const GET = async (req: Request) => {
       );
     }
 
-    console.log("backend - ", userId);
-
     await connectDB();
 
     const snippet = await Snippet.find({ createdBy: userId });
