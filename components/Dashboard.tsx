@@ -8,7 +8,7 @@ import { Dialog } from "./ui/dialog";
 import AddSnippetDialog from "./sections/add-snippet-dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 
-const Homepage = ({
+const Dashboard = ({
   isChange,
   setIsChange,
 }: {
@@ -40,4 +40,4 @@ const Homepage = ({
   );
 };
 
-export default Homepage;
+export default Dashboard;

@@ -9,7 +9,7 @@ export interface ISnippet extends Document {
   createdBy: string;
   userName: string;
   userImage: string;
-  likes: number;
+  likes: string[];
   createdAt: Date;
 }
 
@@ -51,8 +51,7 @@ const snippetSchema: Schema = new Schema(
       required: true,
     },
     likes: {
-      type: Number,
-      default: 0,
+      type: [String],
     },
     createdAt: {
       type: Date,

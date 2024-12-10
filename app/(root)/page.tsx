@@ -1,14 +1,12 @@
-"use client";
-
-import Homepage from "@/components/Homepage";
-import React, { useState } from "react";
+import SplashFeatures from "@/components/sections/splash-features";
+import SplashHeader from "@/components/sections/splash-header";
+import React from "react";
 
 const Page = () => {
-  const [isChange, setIsChange] = useState<boolean>(false);
-
   return (
-    <main className="h-full w-full flex gap-xs pt-xs">
-      <Homepage isChange={isChange} setIsChange={setIsChange} />
+    <main className="h-[calc(100dvh-9rem)] w-full overflow-auto">
+      <SplashHeader />
+      <SplashFeatures />
     </main>
   );
 };

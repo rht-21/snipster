@@ -54,7 +54,7 @@ const Navbar = () => {
           const path = NavItems[key as keyof typeof NavItems];
           const isActive =
             (pathname.startsWith(path) && key !== "home") ||
-            (pathname === "/" && key === "home");
+            (pathname === "/dashboard" && key === "home");
 
           return (
             <Link

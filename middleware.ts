@@ -1,9 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const protectedRoutes = createRouteMatcher([
-  "/",
-  "/snippets(.*)",
-  "/explore",
+  "/dashboard",
+  "/snippets",
   "/profile(.*)",
 ]);
 

@@ -163,7 +163,7 @@ const EditSnippetDialog = ({
       setShowLoader(true);
       closeDialog();
       console.log("Snippet deleted", data);
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error deleting snippet:", error);
     } finally {

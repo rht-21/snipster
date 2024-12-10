@@ -14,6 +14,7 @@ import SnippetCategory from "./snippet-category";
 import Image from "next/image";
 import { SnippetProps } from "@/lib/utils";
 import { Loader } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 const SnippetCard = ({
   Snippet,
@@ -23,8 +24,9 @@ const SnippetCard = ({
   isExplore?: boolean;
 }) => {
   const [copyText, setCopyText] = useState("Copy");
-
+  const [isLiked, setIsLiked] = useState(false); // Track like state
   const router = useRouter();
+  const { user } = useUser();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -42,9 +44,14 @@ const SnippetCard = ({
     }
   }, [isPending]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  useEffect(() => {
+    const userLikes = Array.isArray(Snippet.likes) ? Snippet.likes : [];
+
+    const userId = user?.id;
+    if (userId && userLikes.includes(userId)) {
+      setIsLiked(true);
+    }
+  }, [Snippet.likes, user]);
 
   const copyToClipboard = (snippet: string) => {
     if (copy(snippet)) {
@@ -56,8 +63,40 @@ const SnippetCard = ({
     }, 2000);
   };
 
+  const handleLike = async () => {
+    const userId = user?.id;
+
+    const currentLikes = Array.isArray(Snippet.likes) ? Snippet.likes : [];
+
+    const newLikes = isLiked
+      ? currentLikes.filter((id) => id !== userId)
+      : [...currentLikes, userId];
+
+    try {
+      const response = await fetch(`/api/snippet/like`, {
+        method: "PUT",
+        body: JSON.stringify({ _id: Snippet._id, likes: newLikes }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setIsLiked(!isLiked); // Toggle like state
+      } else {
+        console.error("Failed to like snippet");
+      }
+    } catch (error) {
+      console.error("Error liking snippet", error);
+    }
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
-    <div className="flex max-w-[540px] w-full bg-neutral-800 rounded-2xl flex-col gap-xxs p-xs sm:p-xxs text-base">
+    <div className="flex max-w-[540px] w-full bg-gray-900 rounded-2xl flex-col gap-xxs p-xs sm:p-xxs text-base">
       <div className="flex items-center justify-between">
         {isExplore ? (
           <div className="flex items-center justify-start">
@@ -95,10 +134,16 @@ const SnippetCard = ({
           ) : (
             <IconLock size={16} className="text-foreground/60" />
           )}
-          <IconHeart size={16} className="text-red ml-xxs" />
-          <small className="text-foreground/70 ml-1">{Snippet.likes}</small>
         </div>
         <div className="flex items-center justify-end gap-xs sm:gap-xxs">
+          <span
+            onClick={handleLike}
+            className={`flex items-center justify-end gap-1 text-xs ${
+              isLiked ? "text-red" : "text-foreground/60"
+            } duration-200 sm:hover:text-foreground/80 active:text-foreground/80 cursor-pointer`}
+          >
+            <IconHeart size={17} fill={isLiked ? "#FF7474" : ""} />
+          </span>
           <span
             onClick={() => copyToClipboard(Snippet.codeSnippet)}
             className="flex items-center justify-end gap-1 text-xs text-green duration-200 sm:hover:text-green/60 active:text-green/60 cursor-pointer"

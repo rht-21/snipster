@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const NavItems = {
-  home: "/",
+  home: "/dashboard",
   explore: "/explore",
   snippets: "/snippets",
 };
@@ -32,7 +32,7 @@ export interface SnippetProps {
   keywords: string[];
   isPublic: boolean;
   createdBy: string;
-  likes: number;
+  likes: string[];
   createdAt: Date;
   userImage: string;
   userName: string;
