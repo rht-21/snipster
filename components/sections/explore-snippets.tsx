@@ -96,7 +96,7 @@ const ExploreSnippets = ({
       {/* Error Message */}
       {error && <p className="text-error text-sm mt-2">{error}</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-xs">
         {searchSnippet.length > 0 ? (
           searchSnippet.map((snippet) => (
             <SnippetCard key={snippet._id} Snippet={snippet} isExplore={true} />

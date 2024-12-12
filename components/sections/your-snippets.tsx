@@ -115,7 +115,7 @@ const YourSnippets = ({
       {/* Error Message */}
       {error && <p className="text-error text-sm">{error}</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-xs">
         {filteredAndSortedSnippets.length > 0 ? (
           filteredAndSortedSnippets.map((snippet) => (
             <SnippetCard key={snippet._id} Snippet={snippet} />

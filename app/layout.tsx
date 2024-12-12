@@ -12,7 +12,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Snipster - Manage Your Code Snippets",
   description:
-    "Snipster is is a web-based tool designed to help developers store, categorize, and easily retrieve reusable code snippets.",
+    "Snipster is a web-based tool designed to help developers store, categorize, and easily retrieve reusable code snippets.",
 };
 
 export default function RootLayout({

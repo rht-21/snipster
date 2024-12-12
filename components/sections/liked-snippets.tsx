@@ -110,7 +110,7 @@ const LikedSnippets = ({
       {error ? (
         <p className="text-red-500">{error}</p> // Display the error message if it exists
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-xs">
           {filteredAndSortedSnippets.length > 0 ? (
             filteredAndSortedSnippets.map((snippet) => (
               <SnippetCard key={snippet._id} Snippet={snippet} />

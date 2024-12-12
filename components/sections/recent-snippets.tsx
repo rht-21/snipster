@@ -78,7 +78,7 @@ const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
       {/* Error Message */}
       {error && <p className="text-error text-sm mt-2"></p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-xs">
         {snippets.length > 0 ? (
           snippets.map((snippet) => (
             <SnippetCard key={snippet._id} Snippet={snippet} />
