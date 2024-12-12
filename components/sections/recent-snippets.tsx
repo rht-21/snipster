@@ -11,6 +11,7 @@ const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
   const [snippets, setSnippets] = useState<SnippetProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null); // Track error state
 
   const handleLinkClick = () => {
     startTransition(() => {
@@ -27,10 +28,9 @@ const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
   useEffect(() => {
     const fetchSnippets = async () => {
       setLoading(true);
+      setError(null); // Reset error state before fetching
 
       try {
-        console.log("Frontend - ", user?.id);
-
         const queryParams = new URLSearchParams({
           _id: user?.id || "",
         }).toString();
@@ -39,14 +39,16 @@ const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
+
         if (!response.ok) {
           throw new Error("Failed to fetch snippets");
         }
+
         const data = await response.json();
-        console.log(data);
         setSnippets(data.slice(0, 3));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.log(error);
+        setError("Failed to load recent snippets. Please try again later."); // Set error message
       } finally {
         setLoading(false);
       }
@@ -72,6 +74,10 @@ const RecentSnippets = ({ isChange }: { isChange: boolean }) => {
           <IconChevronRight size={16} stroke={1.5} />
         </Link>
       </div>
+
+      {/* Error Message */}
+      {error && <p className="text-error text-sm mt-2"></p>}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-xs">
         {snippets.length > 0 ? (
           snippets.map((snippet) => (

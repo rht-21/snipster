@@ -30,7 +30,16 @@ const SnippetCard = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null); // For like error
 
+  // Handle like state on initial load (only when Snippet.likes or user changes)
+  useEffect(() => {
+    if (user?.id && Array.isArray(Snippet.likes)) {
+      setIsLiked(Snippet.likes.includes(user.id));
+    }
+  }, [Snippet.likes, user]);
+
+  // Navigate to the snippet detail page with transition
   const handleLinkClick = () => {
     startTransition(() => {
       setIsLoading(true);
@@ -44,15 +53,7 @@ const SnippetCard = ({
     }
   }, [isPending]);
 
-  useEffect(() => {
-    const userLikes = Array.isArray(Snippet.likes) ? Snippet.likes : [];
-
-    const userId = user?.id;
-    if (userId && userLikes.includes(userId)) {
-      setIsLiked(true);
-    }
-  }, [Snippet.likes, user]);
-
+  // Copy snippet to clipboard
   const copyToClipboard = (snippet: string) => {
     if (copy(snippet)) {
       setCopyText("Copied");
@@ -63,11 +64,12 @@ const SnippetCard = ({
     }, 2000);
   };
 
+  // Handle the like action for the snippet
   const handleLike = async () => {
     const userId = user?.id;
+    if (!userId) return;
 
     const currentLikes = Array.isArray(Snippet.likes) ? Snippet.likes : [];
-
     const newLikes = isLiked
       ? currentLikes.filter((id) => id !== userId)
       : [...currentLikes, userId];
@@ -84,10 +86,11 @@ const SnippetCard = ({
       if (response.ok) {
         setIsLiked(!isLiked); // Toggle like state
       } else {
-        console.error("Failed to like snippet");
+        setError("Failed to like snippet. Please try again.");
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Error liking snippet", error);
+      setError("Error liking snippet. Please try again.");
     }
   };
 
@@ -160,6 +163,9 @@ const SnippetCard = ({
           </span>
         </div>
       </div>
+
+      {/* Display error message if like fails */}
+      {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
     </div>
   );
 };

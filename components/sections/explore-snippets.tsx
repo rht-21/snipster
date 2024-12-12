@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import SnippetCard from "../ui/snippet-card";
 import Loader from "../Loader";
 import { SnippetProps } from "@/lib/utils";
@@ -16,10 +16,12 @@ const ExploreSnippets = ({
 }) => {
   const [snippets, setSnippets] = useState<SnippetProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSnippets = async () => {
       setLoading(true);
+      setError(null); // Reset error state before fetching
       try {
         const response = await fetch("/api/getAllSnippets");
         if (!response.ok) {
@@ -27,8 +29,9 @@ const ExploreSnippets = ({
         }
         const data = await response.json();
         setSnippets(data);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.error(error);
+        setError("Failed to load snippets. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -37,16 +40,18 @@ const ExploreSnippets = ({
     fetchSnippets();
   }, []);
 
-  const filterSnippets = (snippets: SnippetProps[]) => {
+  // Filter snippets by category
+  const filterSnippets = useMemo(() => {
     return snippets.filter((snippet) => {
       const categoryMatch =
         filters.category === "" || snippet.category === filters.category;
       return categoryMatch;
     });
-  };
+  }, [snippets, filters.category]);
 
-  const sortSnippets = (snippets: SnippetProps[]) => {
-    return snippets.sort((a, b) => {
+  // Sort snippets based on the selected sorting method
+  const sortSnippets = useMemo(() => {
+    return filterSnippets.sort((a, b) => {
       switch (sortBy) {
         case "name":
           return a.snippetName.localeCompare(b.snippetName);
@@ -64,27 +69,23 @@ const ExploreSnippets = ({
           return 0;
       }
     });
-  };
+  }, [filterSnippets, sortBy]);
 
-  const searchSnippet = (snippets: SnippetProps[]) => {
-    if (!searchTerm) return snippets;
+  // Filter snippets by search term
+  const searchSnippet = useMemo(() => {
+    if (!searchTerm) return sortSnippets;
     const normalizedSearchTerm = searchTerm.toLowerCase();
 
-    return snippets.filter((snippet) => {
+    return sortSnippets.filter((snippet) => {
       const nameMatch = snippet.snippetName
         .toLowerCase()
         .includes(normalizedSearchTerm);
       const keywordsMatch = snippet.keywords?.some((keyword: string) =>
         keyword.toLowerCase().includes(normalizedSearchTerm)
       );
-
       return nameMatch || keywordsMatch;
     });
-  };
-
-  const filteredAndSortedSnippets = searchSnippet(
-    sortSnippets(filterSnippets(snippets))
-  );
+  }, [sortSnippets, searchTerm]);
 
   if (loading) {
     return <Loader />;
@@ -92,9 +93,12 @@ const ExploreSnippets = ({
 
   return (
     <section className="flex flex-col gap-xs">
+      {/* Error Message */}
+      {error && <p className="text-error text-sm mt-2">{error}</p>}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
-        {filteredAndSortedSnippets.length > 0 ? (
-          filteredAndSortedSnippets.map((snippet) => (
+        {searchSnippet.length > 0 ? (
+          searchSnippet.map((snippet) => (
             <SnippetCard key={snippet._id} Snippet={snippet} isExplore={true} />
           ))
         ) : (

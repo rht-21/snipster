@@ -17,11 +17,13 @@ const LikedSnippets = ({
 }) => {
   const [snippets, setSnippets] = useState<SnippetProps[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // State for error tracking
   const { user } = useUser();
 
   useEffect(() => {
     const fetchSnippets = async () => {
       setLoading(true);
+      setError(null); // Reset the error state before fetching
       const queryParams = new URLSearchParams({
         _id: user?.id || "",
       }).toString();
@@ -35,14 +37,19 @@ const LikedSnippets = ({
         }
         const data = await response.json();
         setSnippets(data);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        console.log(error);
+        setError(
+          "Something went wrong while fetching liked snippets. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSnippets();
+    if (user) {
+      fetchSnippets();
+    }
   }, [user]);
 
   const filterSnippets = (snippets: SnippetProps[]) => {
@@ -100,17 +107,21 @@ const LikedSnippets = ({
 
   return (
     <section className="flex flex-col gap-xs">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
-        {filteredAndSortedSnippets.length > 0 ? (
-          filteredAndSortedSnippets.map((snippet) => (
-            <SnippetCard key={snippet._id} Snippet={snippet} />
-          ))
-        ) : (
-          <p className="text-foreground/70">
-            No liked snippets? Explore them now!
-          </p>
-        )}
-      </div>
+      {error ? (
+        <p className="text-red-500">{error}</p> // Display the error message if it exists
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-xs">
+          {filteredAndSortedSnippets.length > 0 ? (
+            filteredAndSortedSnippets.map((snippet) => (
+              <SnippetCard key={snippet._id} Snippet={snippet} />
+            ))
+          ) : (
+            <p className="text-foreground/70">
+              No liked snippets? Explore them now!
+            </p>
+          )}
+        </div>
+      )}
     </section>
   );
 };

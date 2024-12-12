@@ -22,6 +22,7 @@ const SnippetPage = () => {
   const [isChange, setIsChange] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [copyText, setCopyText] = useState("Copy");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Track error message
 
   useEffect(() => {
     const fetchSnippets = async () => {
@@ -38,7 +39,7 @@ const SnippetPage = () => {
           });
 
           if (!response.ok) {
-            throw new Error("Failed to fetch snippet");
+            throw new Error("Failed to fetch snippet. Please try again later.");
           }
 
           const data = await response.json();
@@ -46,9 +47,12 @@ const SnippetPage = () => {
           setLoading(false);
         }
       } catch (error) {
-        console.log(error);
-      } finally {
         setLoading(false);
+        if (error instanceof Error) {
+          setErrorMessage(error.message || "An unexpected error occurred.");
+        } else {
+          setErrorMessage("An unexpected error occurred.");
+        }
       }
     };
 
@@ -76,7 +80,11 @@ const SnippetPage = () => {
 
   return (
     <>
-      {snippet ? (
+      {errorMessage ? (
+        <section className="min-h-[calc(100dvh-9rem)] text-center w-full flex-col gap-xs flex items-center justify-center text-h3 text-error">
+          {errorMessage}
+        </section>
+      ) : snippet ? (
         <section className="min-h-[calc(100dvh-9rem)] w-full flex flex-col gap-xxs py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
@@ -144,8 +152,7 @@ const SnippetPage = () => {
         </section>
       ) : (
         <section className="min-h-[calc(100dvh-9rem)] text-center w-full flex-col gap-xs flex items-center justify-center text-h3 text-foreground/70">
-          {`Opps, the snippet does not exist, might be private, or you don't have
-        access. ${id} as ${user?.id}`}
+          {`Oops, the snippet does not exist, might be private, or you don't have access. ${id} as ${user?.id}`}
         </section>
       )}
     </>

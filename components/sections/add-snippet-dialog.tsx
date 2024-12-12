@@ -38,7 +38,9 @@ const formSchema = z.object({
     .max(100, "Snippet name must be between 2 and 100 characters."),
   category: z.string().min(1, "Please select a category."),
   codeSnippet: z.string().min(1, "Code snippet is required."),
-  keywords: z.array(z.string()).optional(),
+  keywords: z
+    .array(z.string().min(1, "Keyword cannot be an empty string."))
+    .optional(),
   isPublic: z.boolean(),
   createdBy: z.string(),
   userName: z.string(),
@@ -75,6 +77,7 @@ const AddSnippetDialog = ({
   });
 
   const [keywords, setKeywords] = useState<string[]>([]); // Local state for keywords
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Local error message
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value);
@@ -97,6 +100,7 @@ const AddSnippetDialog = ({
       e.preventDefault();
 
       const newKeyword = inputElement.value.trim();
+      if (newKeyword === "") return;
       setKeywords((prevKeywords) => [...prevKeywords, newKeyword]);
       form.resetField("keywords");
       inputElement.value = "";
@@ -118,9 +122,8 @@ const AddSnippetDialog = ({
       userImage: user?.imageUrl,
     };
 
-    console.log(updatedValues);
-
     setLoading(true);
+    setErrorMessage(null); // Reset error message
 
     try {
       const response = await fetch("/api/snippets", {
@@ -135,15 +138,19 @@ const AddSnippetDialog = ({
 
       if (response.ok) {
         setShowLoader(true);
-        console.log("Snippet created successfully:", data.snippet);
         setIsChange(!isChange);
         closeDialog();
       } else {
-        console.error("Error creating snippet:", data.error);
+        setErrorMessage(
+          data.error || "An error occurred while creating the snippet."
+        );
       }
     } catch (error) {
-      console.error("Network error:", error);
+      setErrorMessage(
+        "Network error: " + (error instanceof Error ? error.message : "Unknown")
+      );
     } finally {
+      form.reset();
       setLoading(false);
       setShowLoader(false);
     }
@@ -335,6 +342,11 @@ const AddSnippetDialog = ({
             )}
           </div>
 
+          {/* Error Message Display */}
+          {errorMessage && (
+            <div className="mt-4 text-error text-sm">{errorMessage}</div>
+          )}
+
           <div className="flex item-center flex-row-reverse justify-start gap-xxs">
             <Button
               className="bg-red hover:bg-red/90 focus:border-2 focus:border-white text-background"
@@ -347,6 +359,7 @@ const AddSnippetDialog = ({
               onClick={() => {
                 form.reset();
                 setKeywords([]);
+                setErrorMessage(null); // Clear error message on reset
               }}
               type="reset"
               disabled={loading}

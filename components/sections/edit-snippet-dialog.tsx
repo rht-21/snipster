@@ -52,6 +52,7 @@ const categories = [
   "PHP",
   "Swift",
 ];
+
 const EditSnippetDialog = ({
   Snippet,
   closeDialog,
@@ -63,6 +64,7 @@ const EditSnippetDialog = ({
   const [showCode, setShowCode] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Local error message
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,14 +82,12 @@ const EditSnippetDialog = ({
     form.setValue("snippetName", Snippet.snippetName);
     form.setValue("category", Snippet.category);
     form.setValue("codeSnippet", Snippet.codeSnippet);
-    form.setValue("keywords", []);
+    form.setValue("keywords", Snippet.keywords || []); // Initialize keywords
     form.setValue("isPublic", Snippet.isPublic);
-
-    console.log("logging...");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [Snippet]);
 
-  const [keywords, setKeywords] = useState<string[]>(Snippet.keywords);
+  const [keywords, setKeywords] = useState<string[]>(Snippet.keywords || []);
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value);
@@ -110,6 +110,7 @@ const EditSnippetDialog = ({
       e.preventDefault();
 
       const newKeyword = inputElement.value.trim();
+      if (newKeyword === "") return;
       setKeywords((prevKeywords) => [...prevKeywords, newKeyword]);
       form.resetField("keywords");
       inputElement.value = "";
@@ -119,6 +120,7 @@ const EditSnippetDialog = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const updatedValues = { ...values, keywords };
     setLoading(true);
+    setErrorMessage(null);
 
     try {
       const response = await fetch(`/api/snippets`, {
@@ -130,14 +132,15 @@ const EditSnippetDialog = ({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error("Failed to update snippet");
+        throw new Error(data.error || "Failed to update snippet");
       }
 
       setShowLoader(true);
       closeDialog();
-      console.log("Snippet updated:", data);
     } catch (error) {
-      console.error("Error updating snippet:", error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "An error occurred"
+      );
     } finally {
       setLoading(false);
       setShowLoader(false);
@@ -157,15 +160,16 @@ const EditSnippetDialog = ({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error("Failed to delete snippet");
+        throw new Error(data.error || "Failed to delete snippet");
       }
 
       setShowLoader(true);
       closeDialog();
-      console.log("Snippet deleted", data);
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error deleting snippet:", error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "An error occurred"
+      );
     } finally {
       setLoading(false);
       setShowLoader(false);
@@ -359,6 +363,10 @@ const EditSnippetDialog = ({
               </div>
             )}
           </div>
+
+          {errorMessage && (
+            <div className="mt-4 text-error text-sm">{errorMessage}</div>
+          )}
 
           <div className="flex item-center flex-row-reverse justify-start gap-xxs">
             <Button

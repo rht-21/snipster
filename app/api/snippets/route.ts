@@ -29,8 +29,6 @@ export const POST = async (req: NextRequest) => {
       createdAt: new Date(),
     });
 
-    console.log(newSnippet);
-
     await newSnippet.save();
 
     return NextResponse.json(
