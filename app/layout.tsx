@@ -10,9 +10,26 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Snipster - Manage Your Code Snippets",
+  title: "Snipster - Code Snippet Management Tool for Developers",
   description:
-    "Snipster is a web-based tool designed to help developers store, categorize, and easily retrieve reusable code snippets.",
+    "Snipster helps developers manage, store, and categorize reusable code snippets efficiently, improving workflow and boosting productivity.",
+  keywords: [
+    "code snippets",
+    "developer tools",
+    "snippet manager",
+    "code management",
+    "productivity tools for developers",
+    "code storage",
+    "developer productivity",
+    "web development tools",
+  ],
+  openGraph: {
+    title: "Snipster - Code Snippet Management Tool",
+    description:
+      "Snipster is a web-based tool for developers to organize, manage, and quickly retrieve reusable code snippets, improving efficiency in software development.",
+    url: "https://snipster.rht21.xyz/", // Update with your actual site URL
+    type: "website",
+  },
 };
 
 export default function RootLayout({
